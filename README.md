@@ -8,6 +8,6 @@ This is a personal finance application that helps you track your spendings by us
 
 ## Preview
 
-<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture1.png" width =  400px height = 500px />
-<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture2.png" width = 400 px height = 500px />
-<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture3.png" height = 500 px/>
+<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture1.png" width =  200px height = 500px />
+<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture2.png" width = 200 px height = 500px />
+<img src = "https://github.com/adityaaa-31/FinSmart/blob/main/assets/images/Picture3.png" width = 200px height = 500 px/>
