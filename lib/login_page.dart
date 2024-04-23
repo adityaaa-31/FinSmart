@@ -123,9 +123,6 @@ class _MyAppState extends State<loginPage> {
                 ),
               ),
 
-              // SizedBox(
-              //   height: 10,
-              // ),
 
               Container(
                 height: 50,

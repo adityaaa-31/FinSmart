@@ -3,9 +3,7 @@ import 'package:flutter_application_1/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_1/main_page.dart';
 
-
-// ignore: unnecessary_new
-// ignore: prefer_const_constructors
+ 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -16,7 +14,7 @@ Future main() async{
 }
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
+ 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

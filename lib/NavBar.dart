@@ -61,12 +61,6 @@ class _NavDrawerState extends State<NavDrawer> {
             onTap: () => {Navigator.of(context).pop()},
           ),
 
-          // ListTile(
-          //   leading: Icon(Icons.border_color),
-          //   title: Text('Feedback'),
-          //   onTap: () => {Navigator.of(context).pop()},
-          // ),
-
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
