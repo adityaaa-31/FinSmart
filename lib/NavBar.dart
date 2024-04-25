@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/home_page.dart';
 
-
-
 class NavDrawer extends StatefulWidget {
   @override
   State<NavDrawer> createState() => _NavDrawerState();
@@ -14,56 +12,45 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> {
   final _user = FirebaseAuth.instance.currentUser!;
 
-
-
-  SnackBar _snackBar = new SnackBar(content: Text('Successfully Logged Out'));
+  SnackBar _snackBar =
+      new SnackBar(content: const Text('Successfully Logged Out'));
 
   signout() {
     FirebaseAuth.instance.signOut();
     ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-
-            child: Text(
-              'User ${_user.email}',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+            decoration: const BoxDecoration(
+              color: Colors.lightGreen,
             ),
-
-            decoration: BoxDecoration(
-                color: Colors.lightGreen,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/cover.jpg')
-                )
+            child: Text(
+              '${_user.email}',
+              style: const TextStyle(color: Colors.white, fontSize: 25),
             ),
           ),
-
           ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
+            leading: const Icon(Icons.input),
+            title: const Text('Welcome'),
             onTap: () {
-              Navigator.pop(context, MaterialPageRoute(builder: (context) => NavDrawer()));
+              Navigator.pop(context,
+                  MaterialPageRoute(builder: (context) => NavDrawer()));
             },
           ),
-
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
             onTap: () => {Navigator.of(context).pop()},
           ),
-
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
             onTap: signout,
           ),
         ],

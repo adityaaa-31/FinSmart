@@ -45,6 +45,7 @@ dependencies:
   fl_chart: ^0.35.0
   uuid: ^4.2.2
   google_nav_bar: ^5.0.6
+  fluttertoast: ^8.2.5
   
 dev_dependencies:
   flutter_test:

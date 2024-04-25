@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_application_1/services/sms.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_application_1/visualize.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 import 'models/Transaction.dart';
+import 'visualize.dart';
 
 class Home_Page extends StatefulWidget {
   @override
@@ -12,10 +14,6 @@ class Home_Page extends StatefulWidget {
 }
 
 class _HomePageState extends State<Home_Page> {
-  List<Transaction> transactions = [];
-  List<SmsMessage> messages = [];
-  double totalDebitAmount = 0;
-  double totalCreditAmount = 0;
   bool isTransactionsFiltered = false;
   List<String> categories = [
     'Food',
@@ -25,7 +23,6 @@ class _HomePageState extends State<Home_Page> {
     'Bills',
     'Others'
   ];
-  String selectedCategory = '';
   int _selectedIndex = 0;
 
   @override
@@ -56,125 +53,6 @@ class _HomePageState extends State<Home_Page> {
     });
   }
 
-  void filterTransactions() {
-    var uuid = const Uuid();
-
-    final regExpDate =
-        RegExp(r'\d{1,2}[-/]\d{1,2}[-/]\d{2}|\d{1,2}[-/]\d{1,2}[-/]\d{4}');
-    RegExp regExpCred = RegExp(r"(?:INR\.*|Rs)\s*(\d+(?:\.\d*)?)");
-
-    for (SmsMessage message in messages) {
-      if (message.body!.contains('credited') ||
-          message.body!.contains('debited')) {
-        List<String> parts = message.body!.split(' ');
-
-        List importedIds = transactions.map((t) => t.id).toList();
-
-        RegExpMatch? match1 = regExpCred.firstMatch(message.body.toString());
-
-        final matchDate = regExpDate.allMatches(message.body.toString());
-        String title = "";
-
-        title = parts.toString().contains('credited')
-            ? "Amount Credited"
-            : "Amount Debited";
-
-        if (match1 != null) {
-          String? amountCreditText = match1.group(0);
-
-          double amountCredit = double.parse(amountCreditText!
-              .replaceAll('INR.', '')
-              .replaceAll('INR', '')
-              .replaceAll('Rs', ''));
-
-          String transactionId = uuid.v4().toString();
-
-          if (!importedIds.contains(transactionId)) {
-            String dateText =
-                matchDate != null ? matchDate.first.group(0)! : '';
-
-            addTransactions(
-                transactionId,
-                title,
-                transactionId,
-                selectedCategory,
-                amountCredit.toString(),
-                totalDebitAmount.toString(),
-                totalCreditAmount.toString(),
-                dateText.toString());
-
-            print('Transaction id: $transactionId has $amountCredit');
-          }
-        }
-      } //credit/debit
-    } //message iteration
-
-    // Calculate total amounts after processing all messages
-    totalCreditAmount = transactions
-        .where((transaction) => transaction.title == "Amount Credited")
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount);
-
-    totalDebitAmount = transactions
-        .where((transaction) => transaction.title == "Amount Debited")
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount);
-
-    print('Total Credit Amount: $totalCreditAmount');
-    print('Total Debit Amount: $totalDebitAmount');
-  }
-
-  void addTransactions(
-      String total,
-      String title,
-      String transactionId,
-      String category,
-      String amount,
-      String totalCreditAmount,
-      String totalDebitAmount,
-      String date) {
-    transactions.add(Transaction(
-        total: total,
-        title: title,
-        amount: amount,
-        id: transactionId,
-        date: date,
-        totalCredit: totalCreditAmount,
-        totalDebit: totalDebitAmount));
-  }
-
-  void _showCategorySelectionDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Category'),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(categories[index]),
-                  onTap: () {
-                    selectedCategory = categories[index];
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${categories[index]} selected'),
-                      ),
-                    );
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -188,13 +66,79 @@ class _HomePageState extends State<Home_Page> {
           builder: (context) => ChartPage(
             totalCreditAmount: totalCreditAmount,
             totalDebitAmount: totalDebitAmount,
+            categoryData: categoryData,
           ),
         ),
       );
     }
   }
 
-  // Method to build the widget tree for displaying transactions
+  void _updateCategoryData(String selectedCategory, double amount) {
+    categoryData[selectedCategory] = categoryData[selectedCategory]! + amount;
+  }
+
+  void _showCategorySelectionDialog(Transaction transaction) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Category'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: categories.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(categories[index]),
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = categories[index];
+                    });
+                    _updateCategoryData(
+                        selectedCategory, double.parse(transaction.amount));
+                    Fluttertoast.showToast(
+                      msg: '${categories[index]} selected',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 2,
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16.0,
+                    );
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildTransactionList(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            label: 'Chart',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.green,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
   Widget _buildTransactionList() {
     return SingleChildScrollView(
       child: Column(
@@ -236,7 +180,8 @@ class _HomePageState extends State<Home_Page> {
                     itemCount: transactions.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: _showCategorySelectionDialog,
+                        onTap: () =>
+                            _showCategorySelectionDialog(transactions[index]),
                         child: Card(
                           elevation: 12,
                           child: ListTile(
@@ -280,29 +225,6 @@ class _HomePageState extends State<Home_Page> {
             height: 10,
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body:
-          _buildTransactionList(), // Calling the method to build transaction list
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: 'Chart',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        onTap: _onItemTapped,
       ),
     );
   }
