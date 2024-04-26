@@ -15,6 +15,8 @@ class Home_Page extends StatefulWidget {
 
 class _HomePageState extends State<Home_Page> {
   bool isTransactionsFiltered = false;
+  String selectedCategory = '';
+
   List<String> categories = [
     'Food',
     'Shopping',
@@ -67,6 +69,7 @@ class _HomePageState extends State<Home_Page> {
             totalCreditAmount: totalCreditAmount,
             totalDebitAmount: totalDebitAmount,
             categoryData: categoryData,
+            transactions: transactions,
           ),
         ),
       );
@@ -95,6 +98,7 @@ class _HomePageState extends State<Home_Page> {
                     setState(() {
                       selectedCategory = categories[index];
                     });
+                    transaction.category = selectedCategory;
                     _updateCategoryData(
                         selectedCategory, double.parse(transaction.amount));
                     Fluttertoast.showToast(
@@ -201,7 +205,7 @@ class _HomePageState extends State<Home_Page> {
                                   width: 20,
                                 ),
                                 Text(
-                                  'Category',
+                                  transactions[index].category.toString(),
                                   style: GoogleFonts.abel(
                                       fontWeight: FontWeight.bold),
                                 ),

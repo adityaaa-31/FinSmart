@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/home_page.dart';
+import 'package:flutter_application_1/services/sms.dart';
+
+import 'services/export.dart';
 
 class NavDrawer extends StatefulWidget {
   @override
@@ -47,6 +50,11 @@ class _NavDrawerState extends State<NavDrawer> {
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () => {Navigator.of(context).pop()},
+          ),
+          ListTile(
+            leading: const Icon(Icons.download_sharp),
+            title: const Text('Export Data'),
+            onTap: () => exportTransactionsToCSV(transactions),
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/services/sms.dart';
 import 'package:pie_chart/pie_chart.dart';
+
+import 'models/Transaction.dart';
 
 class ChartPage extends StatefulWidget {
   final double totalCreditAmount;
   final double totalDebitAmount;
   final Map<String, double> categoryData;
+  final List<Transaction> transactions; // Include transactions as a parameter
 
-  ChartPage({
-    required this.totalCreditAmount,
-    required this.totalDebitAmount,
-    required this.categoryData,
-  });
+  ChartPage(
+      {required this.totalCreditAmount,
+      required this.totalDebitAmount,
+      required this.categoryData,
+      required this.transactions});
 
   @override
   _ChartPageState createState() => _ChartPageState();
@@ -20,14 +24,6 @@ class _ChartPageState extends State<ChartPage> {
   late double totalCreditAmount;
   late double totalDebitAmount;
   late Map<String, double> categoryData;
-//   Map<String, double> categoryMap = {
-//   'Food': 0,
-//   'Shopping': 2500,
-//   'Transportation': 800,
-//   'Entertainment': 500,
-//   'Bills': 3000,
-//   'Others': 1000,
-// };
 
   @override
   void initState() {
@@ -35,13 +31,9 @@ class _ChartPageState extends State<ChartPage> {
     totalCreditAmount = widget.totalCreditAmount;
     totalDebitAmount = widget.totalDebitAmount;
     categoryData = widget.categoryData;
+    transactions = widget.transactions;
   }
 
-  // void updateCategoryData(Map<String, double> newCategoryData) {
-  //   setState(() {
-  //     categoryData = newCategoryData;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

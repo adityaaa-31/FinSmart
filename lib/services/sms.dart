@@ -35,35 +35,6 @@ void addTransactions(
       totalDebit: totalDebitAmount));
 }
 
-void updateCategoryMap() {
-  categoryData = {
-    'Food': transactions
-        .where((transaction) => transaction.category == 'Food')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-    'Shopping': transactions
-        .where((transaction) => transaction.category == 'Shopping')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-    'Transportation': transactions
-        .where((transaction) => transaction.category == 'Transportation')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-    'Entertainment': transactions
-        .where((transaction) => transaction.category == 'Entertainment')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-    'Bills': transactions
-        .where((transaction) => transaction.category == 'Bills')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-    'Others': transactions
-        .where((transaction) => transaction.category == 'Others')
-        .map((transaction) => double.parse(transaction.amount))
-        .fold(0, (prev, amount) => prev + amount),
-  };
-}
-
 void filterTransactions() {
   var uuid = const Uuid();
 
@@ -105,7 +76,7 @@ void filterTransactions() {
               transactionId,
               title,
               transactionId,
-              selectedCategory,
+              selectedCategory.toString(),
               amountCredit.toString(),
               totalDebitAmount.toString(),
               totalCreditAmount.toString(),
@@ -131,5 +102,4 @@ void filterTransactions() {
   print('Total Credit Amount: $totalCreditAmount');
   print('Total Debit Amount: $totalDebitAmount');
 
-  // updateCategoryMap();
 }
