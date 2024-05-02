@@ -147,7 +147,8 @@ class _MyAppState extends State<loginPage> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter a password';
-                      } 
+                      }
+                      return null;
                     },
                   ),
                 ),

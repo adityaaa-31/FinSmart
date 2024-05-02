@@ -1,3 +1,4 @@
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/models/Transaction.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:uuid/uuid.dart';
@@ -24,7 +25,8 @@ void addTransactions(
     String amount,
     String totalCreditAmount,
     String totalDebitAmount,
-    String date) {
+    String date,
+    String bankName) {
   transactions.add(Transaction(
       total: total,
       title: title,
@@ -32,14 +34,25 @@ void addTransactions(
       id: transactionId,
       date: date,
       totalCredit: totalCreditAmount,
-      totalDebit: totalDebitAmount));
+      totalDebit: totalDebitAmount,
+      bank: bankName));
+}
+
+List<String> extractBankName(SmsMessage message) {
+  List<String> matchingBanks = [];
+  for (String bankName in bankNames) {
+    if (message.body!.contains(bankName)) {
+      matchingBanks.add(bankName);
+    }
+  }
+  return matchingBanks.isNotEmpty ? matchingBanks : ['Select Bank'];
 }
 
 void filterTransactions() {
   var uuid = const Uuid();
 
-  final regExpDate =
-      RegExp(r'\d{1,2}[-/]\d{1,2}[-/]\d{2}|\d{1,2}[-/]\d{1,2}[-/]\d{4}');
+  final regExpDate = RegExp(
+      r'(?<day>\d{1,2})[-/](?<month>\d{1,2})[-/](?<year>\d{2}(?:\d{2})?)');
   final RegExp regExpCred = RegExp(r"(?:INR\.*|Rs)\s*(\d+(?:\.\d*)?)");
 
   for (SmsMessage message in messages) {
@@ -67,6 +80,8 @@ void filterTransactions() {
             .replaceAll('Rs', ''));
 
         String transactionId = uuid.v4().toString();
+        String bankName = extractBankName(message)
+            .first; // Extract the first bank name from the list
 
         if (!importedIds.contains(transactionId)) {
           String dateText =
@@ -80,9 +95,11 @@ void filterTransactions() {
               amountCredit.toString(),
               totalDebitAmount.toString(),
               totalCreditAmount.toString(),
-              dateText.toString());
+              dateText.toString(),
+              bankName);
 
-          print('Transaction id: $transactionId has $amountCredit');
+          print(
+              'Transaction id: $transactionId has $amountCredit  with $dateText');
         }
       }
     } //credit/debit
@@ -101,5 +118,4 @@ void filterTransactions() {
 
   print('Total Credit Amount: $totalCreditAmount');
   print('Total Debit Amount: $totalDebitAmount');
-
 }

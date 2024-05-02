@@ -1,0 +1,42 @@
+List<String> categories = [
+  'Food',
+  'Shopping',
+  'Transportation',
+  'Entertainment',
+  'Bills',
+  'Others'
+];
+
+List<String> bankNames = [
+  'State Bank of India (SBI)',
+  'HDFC Bank',
+  'ICICI Bank',
+  'Axis Bank',
+  'Punjab National Bank (PNB)',
+  'Bank of Baroda (BOB)',
+  'Canara Bank',
+  'Union Bank of India',
+  'Bank of India (BOI)',
+  'IndusInd Bank',
+  'Yes Bank',
+  'IDBI Bank',
+  'Kotak Mahindra Bank',
+  'Central Bank of India',
+  'Indian Bank',
+  'Bank of Maharashtra',
+  'City Union Bank',
+  'Federal Bank',
+  'Karur Vysya Bank',
+  'South Indian Bank',
+  'Bandhan Bank',
+  'RBL Bank',
+  'IDFC First Bank',
+  'Standard Chartered Bank',
+  'DBS Bank',
+  'Citibank',
+  'HSBC Bank',
+  'American Express Bank',
+  'Barclays Bank',
+  'Deutsche Bank',
+  'Cosmos Bank'
+];

@@ -25,7 +25,7 @@ class signupState extends State<signup> {
             email: emailController.text,
             password: passwordController.text,
           );
-          FirebaseAuth.instance.signOut();
+          // FirebaseAuth.instance.signOut();
           Fluttertoast.showToast(
             msg: 'Account Created',
             toastLength: Toast.LENGTH_SHORT,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/selection_page.dart';
 import 'package:flutter_application_1/services/sms.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:uuid/uuid.dart';
 import 'models/Transaction.dart';
 import 'visualize.dart';
 
@@ -17,14 +17,6 @@ class _HomePageState extends State<Home_Page> {
   bool isTransactionsFiltered = false;
   String selectedCategory = '';
 
-  List<String> categories = [
-    'Food',
-    'Shopping',
-    'Transportation',
-    'Entertainment',
-    'Bills',
-    'Others'
-  ];
   int _selectedIndex = 0;
 
   @override
@@ -81,44 +73,34 @@ class _HomePageState extends State<Home_Page> {
   }
 
   void _showCategorySelectionDialog(Transaction transaction) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Category'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(categories[index]),
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = categories[index];
-                    });
-                    transaction.category = selectedCategory;
-                    _updateCategoryData(
-                        selectedCategory, double.parse(transaction.amount));
-                    Fluttertoast.showToast(
-                      msg: '${categories[index]} selected',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 2,
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      fontSize: 16.0,
-                    );
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            ),
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectionPage(transaction: transaction),
+      ),
+    ).then((selectedData) {
+      if (selectedData != null) {
+        setState(() {
+          transaction.category = selectedData['category'];
+          transaction.bank = selectedData['bank'];
+          transaction.paymentApp = selectedData['paymentApp'];
+        });
+
+        // Update category data if necessary
+        _updateCategoryData(
+            selectedData['category'], double.parse(transaction.amount));
+
+        Fluttertoast.showToast(
+          msg: '${selectedData['category']} selected',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16.0,
         );
-      },
-    );
+      }
+    });
   }
 
   @override
